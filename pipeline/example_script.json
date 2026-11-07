@@ -1,0 +1,128 @@
+[
+ {
+  "text": "A man sold the Eiffel Tower...",
+  "visual": "hook",
+  "data": {
+   "big": "SOLD",
+   "sub": "the Eiffel Tower"
+  }
+ },
+ {
+  "text": "and the buyer was too embarrassed to call the police.",
+  "visual": "quote",
+  "data": {
+   "quote": "The buyer was too embarrassed to call the police.",
+   "who": "1925"
+  }
+ },
+ {
+  "text": "Paris. Nineteen twenty-five.",
+  "visual": "map",
+  "data": {
+   "place": "Paris, France",
+   "year": "1925",
+   "x": 0.52,
+   "y": 0.38
+  }
+ },
+ {
+  "text": "The tower was built for the eighteen eighty-nine World's Fair... and was never meant to stand forever.",
+  "visual": "timeline",
+  "data": {
+   "years": [
+    "1889",
+    "1909",
+    "1925"
+   ],
+   "highlight": 2,
+   "label": "Built to be temporary"
+  }
+ },
+ {
+  "text": "Now it needed expensive repairs.",
+  "visual": "scene",
+  "data": {
+   "kind": "tower",
+   "label": "NEEDED REPAIRS"
+  }
+ },
+ {
+  "text": "Victor Lustig, a con man with over forty arrests... posed as a government official.",
+  "visual": "counter",
+  "data": {
+   "value": 40,
+   "suffix": "+",
+   "label": "Arrests on his record"
+  }
+ },
+ {
+  "text": "He gathered scrap metal dealers for a secret meeting.",
+  "visual": "document",
+  "data": {
+   "title": "TOP SECRET",
+   "lines": [
+    "Subject: Eiffel Tower",
+    "Status: For sale",
+    "Buyers: scrap dealers only"
+   ],
+   "stamp": "CONFIDENTIAL"
+  }
+ },
+ {
+  "text": "The tower, he said... was being sold for scrap.",
+  "visual": "newspaper",
+  "data": {
+   "paper": "Le Petit Parisien",
+   "date": "May 1925",
+   "headline": "Tower to be sold for scrap?"
+  }
+ },
+ {
+  "text": "One dealer, Andr\u00e9 Poisson, won the deal... and even paid a bribe on top.",
+  "visual": "money",
+  "data": {
+   "amount": "+ BRIBE"
+  }
+ },
+ {
+  "text": "Lustig fled to Austria with the cash.",
+  "visual": "map",
+  "data": {
+   "place": "Vienna, Austria",
+   "year": "Escape",
+   "x": 0.6,
+   "y": 0.42
+  }
+ },
+ {
+  "text": "Poisson never said a word.",
+  "visual": "split",
+  "data": {
+   "left": "Victim",
+   "right": "Silent",
+   "vs": "SHH"
+  }
+ },
+ {
+  "text": "So six months later... Lustig came back... and did it again.",
+  "visual": "scene",
+  "data": {
+   "kind": "city",
+   "label": "6 MONTHS LATER"
+  }
+ },
+ {
+  "text": "This time, the victim went to the police.",
+  "visual": "police",
+  "data": {
+   "word": "POLICE"
+  }
+ },
+ {
+  "text": "Because...",
+  "visual": "question",
+  "data": {
+   "q": "Would you have bought it?"
+  }
+ }
+]
