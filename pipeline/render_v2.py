@@ -504,32 +504,25 @@ def add(arr, at, sig, gain=1.0):
     if i0 >= N: return
     L = min(len(sig), N - i0); arr[i0:i0 + L] += sig[:L] * gain
 kick = np.sin(2 * np.pi * (50 + 120 * np.exp(-np.arange(int(.35 * sr)) / sr * 30)) * np.arange(int(.35 * sr)) / sr) * np.exp(-np.arange(int(.35 * sr)) / sr * 9)
-hat = rng.standard_normal(int(.05 * sr)) * np.exp(-np.arange(int(.05 * sr)) / sr * 90); hat = np.diff(hat, prepend=0)
+def tone(f0, f1, L, decay):  # clean pitched blip, NO noise (noise = audible "shhh")
+    n_ = int(L * sr); x = np.arange(n_) / sr
+    ph = 2 * np.pi * np.cumsum(np.linspace(f0, f1, n_)) / sr
+    return np.sin(ph) * np.exp(-x * decay) * np.minimum(1, x * 400)
 k_ = 0.0; step = 0
 while k_ < DUR - .3:
     if step % 4 in (0, 2) or (step % 8 == 7): add(music, k_, kick, .9)
-    add(music, k_ + beat / 2, hat, .25)
     k_ += beat; step += 1
 sfx = np.zeros(N)
-def whoosh(L=.4):
-    n_ = int(L * sr); w = np.convolve(rng.standard_normal(n_), np.ones(40) / 40, "same")
-    return w * np.sin(np.linspace(0, np.pi, n_)) ** 2
-def boom(L=1.2):
+def boom(L=1.0):
     n_ = int(L * sr); x = np.arange(n_) / sr
-    return (np.sin(2 * np.pi * (38 + 60 * np.exp(-x * 8)) * x) * np.exp(-x * 3) + rng.standard_normal(n_) * .25 * np.exp(-x * 14))
-def riser(L=1.5):
-    n_ = int(L * sr); x = np.arange(n_) / sr
-    return np.convolve(rng.standard_normal(n_), np.ones(20) / 20, "same") * (x / L) ** 2 * .8 + np.sin(2 * np.pi * (200 + 800 * (x / L) ** 2) * x) * (x / L) ** 3 * .2
-def click():
-    n_ = int(.025 * sr); return rng.standard_normal(n_) * np.exp(-np.arange(n_) / sr * 300)
+    return np.sin(2 * np.pi * (36 + 70 * np.exp(-x * 9)) * x) * np.exp(-x * 3.5)
 for (t0, tr, vis) in events:
-    if tr != "none": add(sfx, t0 - .1, whoosh(), .55)
-    if vis in ("hook", "police", "money") or tr == "flash": add(sfx, t0, boom(), .8)
+    if tr != "none": add(sfx, t0, tone(320, 160, .12, 30), .35)          # soft tonal "pop" on cuts
+    if vis in ("hook", "police", "money") or tr == "flash": add(sfx, t0, boom(), .9)
     if vis == "counter":
-        for k in range(14): add(sfx, t0 + k * .07, click(), .35)
+        for k in range(14): add(sfx, t0 + k * .07, tone(1800, 1800, .03, 160), .25)
     if vis in ("document", "quote"):
-        for k in range(30): add(sfx, t0 + .3 + k * .085 + rng.uniform(0, .02), click(), .25)
-if len(events) > 2: add(sfx, max(0, events[-1][0] - 1.5), riser(), .5)
+        for k in range(24): add(sfx, t0 + .3 + k * .09, tone(1100, 900, .025, 200), .18)
 # duck music under voice
 v_env = np.zeros(N); L = min(len(vo), N); v_env[:L] = np.abs(vo[:L])
 v_env = np.convolve(v_env, np.ones(int(.15 * sr)) / int(.15 * sr), "same")
