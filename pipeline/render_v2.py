@@ -442,7 +442,7 @@ def draw_captions(fr, t):
 
 # ---------------- render loop ----------------
 ff = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
-                       "-i", "-", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p", f"{wd}/video_only.mp4"],
+                       "-i", "-", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-maxrate", "1.7M", "-bufsize", "3.4M", "-pix_fmt", "yuv420p", f"{wd}/video_only.mp4"],
                       stdin=subprocess.PIPE)
 events = []  # (time, kind) for sound design
 cur = -1
