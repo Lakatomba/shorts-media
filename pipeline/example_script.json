@@ -5,7 +5,8 @@
   "data": {
    "big": "SOLD",
    "sub": "the Eiffel Tower"
-  }
+  },
+  "image_query": "Eiffel Tower Paris"
  },
  {
   "text": "and the buyer was too embarrassed to call the police.",
@@ -17,13 +18,11 @@
  },
  {
   "text": "Paris. Nineteen twenty-five.",
-  "visual": "map",
+  "visual": "photo",
   "data": {
-   "place": "Paris, France",
-   "year": "1925",
-   "x": 0.52,
-   "y": 0.38
-  }
+   "label": "Paris \u00b7 1925"
+  },
+  "image_query": "Paris 1920s street"
  },
  {
   "text": "The tower was built for the eighteen eighty-nine World's Fair... and was never meant to stand forever.",
@@ -40,20 +39,19 @@
  },
  {
   "text": "Now it needed expensive repairs.",
-  "visual": "scene",
+  "visual": "photo",
   "data": {
-   "kind": "tower",
-   "label": "NEEDED REPAIRS"
-  }
+   "label": "Needed repairs"
+  },
+  "image_query": "Tour Eiffel 1889 construction"
  },
  {
   "text": "Victor Lustig, a con man with over forty arrests... posed as a government official.",
-  "visual": "counter",
+  "visual": "photo",
   "data": {
-   "value": 40,
-   "suffix": "+",
-   "label": "Arrests on his record"
-  }
+   "label": "40+ arrests"
+  },
+  "image_query": "Victor Lustig"
  },
  {
   "text": "He gathered scrap metal dealers for a secret meeting.",
@@ -86,13 +84,14 @@
  },
  {
   "text": "Lustig fled to Austria with the cash.",
-  "visual": "map",
+  "visual": "photo",
   "data": {
-   "place": "Vienna, Austria",
-   "year": "Escape",
-   "x": 0.6,
-   "y": 0.42
-  }
+   "label": "Fled to Vienna"
+  },
+  "image_query": [
+   "Wien Ringstra\u00dfe 1920",
+   "Vienna State Opera historical"
+  ]
  },
  {
   "text": "Poisson never said a word.",
@@ -105,18 +104,19 @@
  },
  {
   "text": "So six months later... Lustig came back... and did it again.",
-  "visual": "scene",
+  "visual": "photo",
   "data": {
-   "kind": "city",
-   "label": "6 MONTHS LATER"
-  }
+   "label": "6 months later"
+  },
+  "image_query": "Eiffel Tower night"
  },
  {
   "text": "This time, the victim went to the police.",
-  "visual": "police",
+  "visual": "photo",
   "data": {
-   "word": "POLICE"
-  }
+   "label": "Caught"
+  },
+  "image_query": "Victor Lustig DOJ identification 1931"
  },
  {
   "text": "Because...",

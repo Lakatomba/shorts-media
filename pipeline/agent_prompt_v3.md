@@ -44,8 +44,13 @@ STEP 5 - SCRIPT RULES (for text-to-speech)
 - Use "..." only where a dramatic pause helps; never stack them.
 - Spell hard foreign names phonetically if the voice would mispronounce them.
 
-STEP 6 - STORYBOARD
-For every line choose a visual (hook, map, counter, newspaper, document, timeline, bars, money, police, quote, split, scene, question) and fill its data with fact-checked specifics. At least 8 different visuals, never the same one twice in a row. Line 1 is always "hook"; the last line is "question" or a callback.
+STEP 6 - STORYBOARD (real photos + graphics)
+For every line choose a visual (hook, photo, map, counter, newspaper, document, timeline, bars, money, police, quote, split, scene, question) and fill its data with fact-checked specifics. At least 8 different visuals, never the same one twice in a row. Line 1 is always "hook"; the last line is "question" or a callback.
+REAL PHOTOS: 5-8 lines per video must show a real photo from Wikimedia Commons. Add "image_query": "<2-5 search words>" (or a list of fallback queries) to the entry:
+- on a "photo" line the picture is the star (data.label = 2-3 word caption);
+- on any other visual (always on the hook) the photo becomes the darkened moving background.
+Query the real subject: the person's name, the building, the object, the place + decade ("Victor Lustig", "Antwerp Diamond Centre", "Paris 1920s street"). Prefer historical photos, mugshots, documents, the actual location. prep_images.py downloads them and writes img/contact.jpg: LOOK at it. Replace any photo that is wrong, misleading, low quality or shows the wrong person/place (change the query or set "image_pick": 1, 2...) and re-run; if nothing fits, drop image_query and use a graphic. Never present a photo as something it is not. No photos of private living people; public figures and historical records only.
+Append the contents of credits.txt to the end of the description (license requirement).
 
 STEP 7 - METADATA
 Title (max 50 characters including " #Shorts"): opens a loop without lying. Formulas:

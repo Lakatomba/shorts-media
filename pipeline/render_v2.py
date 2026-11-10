@@ -22,6 +22,8 @@ VISUALS (pick a DIFFERENT one for consecutive lines; use 6+ different kinds per 
   split      data: left, right, vs (str, default "VS")        two-panel comparison
   scene      data: kind (city|tower|vault|bank|ship|mountains|prison), label   parallax silhouette
   question   data: q (str)                                    big "?" + question (great for loop line)
+  photo      data: image (path, set by prep_images.py), label   REAL photo, slow zoom/pan (framed card if low-res)
+ANY other visual may also carry data.image: the photo becomes its darkened moving background (great on the hook).
 """
 import json, math, os, random, subprocess, sys, hashlib
 import numpy as np
@@ -405,8 +407,57 @@ def t_question(fr, d, lt, sd, a, i):
         f = font(80, F_XB); lines = wrap(d, q, f, W - 180); y = H * .58
         for ln in lines: text_c(d, (W / 2, y), ln, f, rgba(TXT), 6); y += 96
 
+_img = {}
+BWc, BHc = int(W * 1.16), int(H * 1.16)
+def load_img(path):
+    if not path: return None
+    if path in _img: return _img[path]
+    try: im = Image.open(path).convert("RGB")
+    except Exception: _img[path] = None; return None
+    sc = max(BWc / im.width, BHc / im.height)
+    cov = im.resize((int(im.width * sc) + 1, int(im.height * sc) + 1), Image.LANCZOS)
+    l, t = (cov.width - BWc) // 2, (cov.height - BHc) // 2
+    cov = cov.crop((l, t, l + BWc, t + BHc))
+    full = sc <= 1.9 and im.height / im.width >= 1.05
+    blur = cov.resize((BWc // 8, BHc // 8)).filter(ImageFilter.GaussianBlur(6)).resize((W, H))
+    blur = Image.blend(blur, Image.new("RGB", (W, H), P["bg1"]), .55)
+    k = min(940 / im.width, 1040 / im.height, 3.0)
+    card = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+    fr_ = Image.new("RGB", (card.width + 28, card.height + 28), (245, 242, 232)); fr_.paste(card, (14, 14))
+    _img[path] = dict(cover=cov, dark=Image.blend(cov, Image.new("RGB", cov.size, (0, 0, 0)), .6), blur=blur, card=fr_, full=full)
+    return _img[path]
+def moving(src, lt, sd, i, zmax=.12):
+    z = 1 + zmax * min(1, lt / max(sd, .1)); cw, ch = int(W * 1.16 / z), int(H * 1.16 / z)
+    dx = (BWc - cw) * (.5 + .45 * (1 if i % 2 else -1) * min(1, lt / max(sd, .1))); dy = (BHc - ch) / 2
+    return src.crop((int(dx), int(dy), int(dx) + cw, int(dy) + ch)).resize((W, H), Image.BILINEAR)
+_shade = None
+def t_photo(fr, d, lt, sd, a, i):
+    global _shade
+    info = load_img(a.get("image"))
+    if not info: return t_scene(fr, d, lt, sd, a, i)
+    if info["full"]:
+        fr.paste(moving(info["cover"], lt, sd, i))
+        if _shade is None:
+            g = np.zeros((H, W, 4), dtype=np.uint8); yy_ = np.linspace(0, 1, H)
+            g[..., 3] = (np.clip((yy_ - .55) / .45, 0, 1) * 200 + np.clip((.22 - yy_) / .22, 0, 1) * 150)[:, None]
+            _shade = Image.fromarray(g)
+        fr.paste(_shade, (0, 0), _shade)
+    else:
+        fr.paste(info["blur"])
+        z = (1 + .07 * min(1, lt / max(sd, .1))) * (.9 + .1 * ease_back(lt * 5))
+        c = info["card"]; c2 = c.resize((int(c.width * z), int(c.height * z)), Image.BILINEAR).convert("RGBA").rotate(-1.5 if i % 2 else 1.5, expand=True, resample=Image.BICUBIC)
+        x, y = int(W / 2 - c2.width / 2), int(H * .44 - c2.height / 2)
+        d2 = ImageDraw.Draw(fr, "RGBA"); d2.rectangle([x + 18, y + 22, x + c2.width + 18, y + c2.height + 22], fill=(0, 0, 0, 120))
+        fr.paste(c2, (x, y), c2)
+    lab = a.get("label", "").upper()
+    if lab:
+        al = ease_out(lt * 3); d2 = ImageDraw.Draw(fr, "RGBA")
+        f = fit(d2, lab, W - 200, 88, F_XB); tw = d2.textlength(lab, font=f)
+        d2.rectangle([W / 2 - tw / 2 - 30, H * .115 - 64, W / 2 + tw / 2 + 30, H * .115 + 64], fill=rgba(ACC, 255 * al))
+        text_c(d2, (W / 2, H * .115), lab, f, (10, 10, 10, int(255 * al)))
+
 TEMPL = dict(hook=t_hook, map=t_map, counter=t_counter, newspaper=t_newspaper, document=t_document, timeline=t_timeline,
-             bars=t_bars, money=t_money, police=t_police, quote=t_quote, split=t_split, scene=t_scene, question=t_question)
+             bars=t_bars, money=t_money, police=t_police, quote=t_quote, split=t_split, scene=t_scene, question=t_question, photo=t_photo)
 SHAKE = {"hook", "police", "money"}
 
 # ---------------- captions ----------------
@@ -455,6 +506,8 @@ for n in range(NF):
     bg = BG_VARIANTS[i % len(BG_VARIANTS)]
     z = 1.0 + .06 * (lt / max(sd, .1))  # slow push-in
     base = bg.resize((int(W * z), int(H * z))).crop((int(W * (z - 1) / 2), int(H * (z - 1) / 2), int(W * (z - 1) / 2) + W, int(H * (z - 1) / 2) + H))
+    _bi = load_img(s["data"].get("image")) if s["visual"] != "photo" else None
+    if _bi: base = moving(_bi["dark"], lt, sd, i, .10)
     d = ImageDraw.Draw(base, "RGBA")
     TEMPL.get(s["visual"], t_scene)(base, d, lt, sd, s["data"], i)
     fr = base
@@ -535,7 +588,8 @@ subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", f"{wd}/video_only.mp
                 "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", f"{wd}/short.mp4"], check=True)
 
 # ---------------- thumbnail ----------------
-th = BG_VARIANTS[0].copy(); d = ImageDraw.Draw(th, "RGBA")
+_ti = next((load_img(s["data"].get("image")) for s in seg if s["data"].get("image")), None)
+th = (_ti["cover"].crop(((BWc - W) // 2, (BHc - H) // 2, (BWc - W) // 2 + W, (BHc - H) // 2 + H)) if _ti else BG_VARIANTS[0].copy()); d = ImageDraw.Draw(th, "RGBA")
 first = seg[0]
 TEMPL.get(first["visual"], t_scene)(th, d, 5.0, 6.0, first["data"], 0) if first["visual"] not in ("hook",) else None
 d.rectangle([0, 0, W, H], fill=(0, 0, 0, 110))
